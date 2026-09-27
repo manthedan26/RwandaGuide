@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Login | RwandaGuide</title>
+
+<style>
+
+:root{
+    --bg:#07111f;
+    --card:#ffffff;
+    --text:#17212b;
+    --muted:#718096;
+    --border:#ccd5df;
+    --primary:#1677d2;
+}
+
+body.dark{
+    --bg:#020914;
+    --card:#101d2d;
+    --text:#f1f5f9;
+    --muted:#aab7c7;
+    --border:#33485e;
+    --primary:#3b9cff;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--bg);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.login{
+    width:90%;
+    max-width:400px;
+    background:var(--card);
+    color:var(--text);
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 15px 50px rgba(0,0,0,.4);
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.theme{
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text);
+    padding:7px 10px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.logo{
+    text-align:center;
+    font-size:26px;
+    font-weight:bold;
+    margin:15px 0 8px;
+}
+
+.subtitle{
+    text-align:center;
+    color:var(--muted);
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin:15px 0 7px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:8px;
+    font-size:15px;
+}
+
+button.loginBtn{
+    width:100%;
+    margin-top:22px;
+    padding:14px;
+    border:0;
+    border-radius:8px;
+    background:var(--primary);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.error{
+    color:#e05252;
+    text-align:center;
+    margin-top:15px;
+}
+
+.back{
+    text-align:center;
+    margin-top:20px;
+}
+
+.back a{
+    color:#2385d0;
+    text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login">
+
+<div class="top">
+
+<span>🔐</span>
+
+<button class="theme"
+        onclick="toggleTheme()"
+        id="themeBtn">
+🌙
+</button>
+
+</div>
+
+<div class="logo">
+    RwandaGuide Admin
+</div>
+
+<div class="subtitle">
+    Secure administration area
+</div>
+
+<form onsubmit="login(event)">
+
+<label>Username</label>
+
+<input
+id="username"
+type="text"
+autocomplete="username"
+required
+>
+
+<label>Password</label>
+
+<input
+id="password"
+type="password"
+autocomplete="current-password"
+required
+>
+
+<button class="loginBtn" type="submit">
+    Sign In
+</button>
+
+</form>
+
+<div id="error" class="error"></div>
+
+<div class="back">
+    <a href="rwandaguide.html">
+        ← Back to RwandaGuide
+    </a>
+</div>
+
+</div>
+
+<script>
+
+function login(event){
+
+    event.preventDefault();
+
+    const username=
+        document.getElementById("username").value;
+
+    const password=
+        document.getElementById("password").value;
+
+    const correctUsername="admin";
+    const correctPassword="Manthedan2026";
+
+    if(
+        username===correctUsername &&
+        password===correctPassword
+    ){
+
+        sessionStorage.setItem(
+            "rwandaGuideAdmin",
+            "true"
+        );
+
+        window.location.href="admin.html";
+
+    }else{
+
+        document.getElementById("error").textContent=
+            "Invalid username or password.";
+
+    }
+
+}
+
+function applyTheme(){
+
+    const dark=
+        localStorage.getItem("rwandaGuideTheme")==="dark";
+
+    document.body.classList.toggle("dark",dark);
+
+    document.getElementById("themeBtn").textContent=
+        dark ? "☀️" : "🌙";
+}
+
+function toggleTheme(){
+
+    const dark=
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "rwandaGuideTheme",
+        dark ? "light" : "dark"
+    );
+
+    applyTheme();
+}
+
+applyTheme();
+
+</script>
+
+</body>
+</html>

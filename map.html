@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RwandaGuide Map</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+:root{
+    --header:#07111f;
+    --card:#ffffff;
+    --text:#17212b;
+    --border:#dce3ea;
+    --bg:#f5f7fa;
+}
+
+body.dark{
+    --header:#020914;
+    --card:#101d2d;
+    --text:#f1f5f9;
+    --border:#293c50;
+    --bg:#07111f;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+header{
+    height:65px;
+    background:var(--header);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    position:relative;
+    z-index:1000;
+}
+
+header a{
+    color:#8ec8ff;
+    text-decoration:none;
+}
+
+.theme{
+    border:1px solid #53677d;
+    background:transparent;
+    color:white;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.search{
+    position:absolute;
+    z-index:1000;
+    top:80px;
+    left:20px;
+    width:320px;
+    background:var(--card);
+    padding:10px;
+    border-radius:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
+
+.search input{
+    width:100%;
+    padding:12px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    border-radius:7px;
+    outline:none;
+}
+
+#map{
+    height:calc(100vh - 65px);
+    width:100%;
+}
+
+@media(max-width:600px){
+
+    .search{
+        width:calc(100% - 40px);
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div>
+    <strong>RwandaGuide</strong>
+</div>
+
+<div>
+
+<a href="rwandaguide.html">
+← Back
+</a>
+
+<button class="theme"
+        onclick="toggleTheme()"
+        id="themeBtn">
+🌙 Dark
+</button>
+
+</div>
+
+</header>
+
+<div class="search">
+
+<input
+id="mapSearch"
+type="text"
+placeholder="Search institution..."
+oninput="searchMap()"
+>
+
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+const demoInstitutions=[
+
+{
+id:"demo-government",
+name:"Rwanda Government",
+category:"Government",
+icon:"🏛",
+latitude:-1.9441,
+longitude:30.0619
+},
+
+{
+id:"demo-health",
+name:"Demo Health Institution",
+category:"Health",
+icon:"🏥",
+latitude:-1.9441,
+longitude:30.0619
+},
+
+{
+id:"demo-education",
+name:"Demo Education Institution",
+category:"Education",
+icon:"🎓",
+latitude:-1.5015,
+longitude:29.6108
+},
+
+{
+id:"demo-justice",
+name:"Demo Justice Institution",
+category:"Justice",
+icon:"⚖",
+latitude:-1.944,
+longitude:30.061
+}
+
+];
+
+function getData(){
+
+    const saved=
+        localStorage.getItem(
+            "rwandaGuideInstitutions"
+        );
+
+    if(saved){
+
+        try{
+
+            const data=JSON.parse(saved);
+
+            if(Array.isArray(data)) return data;
+
+        }catch(e){}
+
+    }
+
+    return demoInstitutions;
+
+}
+
+const map=
+    L.map("map").setView(
+        [-1.9403,29.8739],
+        8
+    );
+
+L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        maxZoom:19,
+        attribution:
+        '&copy; OpenStreetMap contributors'
+    }
+).addTo(map);
+
+let markers=[];
+
+function escapeHTML(value){
+
+    return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+function loadMarkers(){
+
+    markers.forEach(marker=>{
+        map.removeLayer(marker);
+    });
+
+    markers=[];
+
+    getData().forEach(item=>{
+
+        if(
+            typeof item.latitude!=="number" ||
+            typeof item.longitude!=="number"
+        ){
+            return;
+        }
+
+        const marker=
+            L.marker([
+                item.latitude,
+                item.longitude
+            ]).addTo(map);
+
+        marker.bindPopup(`
+
+            <strong>
+                ${escapeHTML(item.icon || "🏢")}
+                ${escapeHTML(item.name)}
+            </strong>
+
+            <br>
+
+            ${escapeHTML(item.category)}
+
+            <br><br>
+
+            <a href="institution.html?id=${encodeURIComponent(item.id)}">
+                View Details
+            </a>
+
+        `);
+
+        marker.rwandaGuideName=
+            String(item.name || "").toLowerCase();
+
+        marker.rwandaGuideCategory=
+            String(item.category || "").toLowerCase();
+
+        markers.push(marker);
+
+    });
+
+}
+
+loadMarkers();
+
+function searchMap(){
+
+    const value=
+        document.getElementById("mapSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+    markers.forEach(marker=>{
+
+        const match=
+            marker.rwandaGuideName.includes(value) ||
+            marker.rwandaGuideCategory.includes(value);
+
+        marker.setOpacity(
+            match || !value ? 1 : .25
+        );
+
+    });
+
+}
+
+const params=
+    new URLSearchParams(window.location.search);
+
+const id=params.get("id");
+
+const lat=params.get("lat");
+const lng=params.get("lng");
+
+if(id){
+
+    const institution=
+        getData().find(item=>item.id===id);
+
+    if(institution){
+
+        map.setView(
+            [
+                institution.latitude,
+                institution.longitude
+            ],
+            16
+        );
+
+        const target=
+            markers.find(marker=>
+                marker.rwandaGuideName===
+                String(institution.name).toLowerCase()
+            );
+
+        if(target){
+            target.openPopup();
+        }
+
+    }
+
+}
+
+if(lat && lng){
+
+    const latitude=parseFloat(lat);
+    const longitude=parseFloat(lng);
+
+    if(!isNaN(latitude) && !isNaN(longitude)){
+
+        map.setView(
+            [latitude,longitude],
+            16
+        );
+
+        L.marker([
+            latitude,
+            longitude
+        ])
+        .addTo(map)
+        .bindPopup("Your location")
+        .openPopup();
+
+    }
+
+}
+
+function applyTheme(){
+
+    const dark=
+        localStorage.getItem("rwandaGuideTheme")==="dark";
+
+    document.body.classList.toggle("dark",dark);
+
+    document.getElementById("themeBtn").textContent=
+        dark ? "☀️ White" : "🌙 Dark";
+}
+
+function toggleTheme(){
+
+    const dark=
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "rwandaGuideTheme",
+        dark ? "light" : "dark"
+    );
+
+    applyTheme();
+}
+
+applyTheme();
+
+</script>
+
+</body>
+</html>

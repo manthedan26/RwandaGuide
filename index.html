@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RwandaGuide Admin</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fa;
+    color:#17212b;
+}
+
+header{
+    background:#07111f;
+    color:white;
+    padding:18px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header strong{
+    font-size:22px;
+}
+
+header button{
+    border:1px solid #456078;
+    background:transparent;
+    color:white;
+    padding:9px 15px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-bottom:30px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.stat strong{
+    display:block;
+    font-size:30px;
+    margin-top:8px;
+}
+
+.form-card,
+.list-card{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    margin-bottom:25px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+input,
+textarea,
+select{
+    padding:11px;
+    border:1px solid #ccd5df;
+    border-radius:7px;
+    font-family:inherit;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+button{
+    border:0;
+    padding:11px 17px;
+    border-radius:7px;
+    cursor:pointer;
+    background:#1677d2;
+    color:white;
+}
+
+button.secondary{
+    background:#6b7785;
+}
+
+button.danger{
+    background:#d83a3a;
+}
+
+.institution{
+    border:1px solid #e0e6ec;
+    border-radius:10px;
+    padding:18px;
+    margin-top:12px;
+}
+
+.institution h3{
+    margin:0 0 5px;
+}
+
+.meta{
+    color:#667483;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.list-actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+}
+
+.search{
+    width:100%;
+    margin-bottom:15px;
+}
+
+.message{
+    margin-top:12px;
+    color:#1677d2;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<strong>
+    RwandaGuide Admin
+</strong>
+
+<button onclick="logout()">
+    Logout
+</button>
+
+</header>
+
+<div class="container">
+
+<div class="stats">
+
+<div class="stat">
+    Total Institutions
+    <strong id="total">0</strong>
+</div>
+
+<div class="stat">
+    Verified
+    <strong id="verified">0</strong>
+</div>
+
+<div class="stat">
+    Unverified
+    <strong id="unverified">0</strong>
+</div>
+
+</div>
+
+<div class="form-card">
+
+<h2 id="formTitle">
+    Add Institution
+</h2>
+
+<form onsubmit="saveInstitution(event)">
+
+<input
+    type="hidden"
+    id="editId"
+>
+
+<div class="form-grid">
+
+<div class="field">
+<label>Name</label>
+<input id="name" required>
+</div>
+
+<div class="field">
+<label>Category</label>
+
+<select id="category" required>
+
+<option value="Government">
+Government
+</option>
+
+<option value="Health">
+Health
+</option>
+
+<option value="Education">
+Education
+</option>
+
+<option value="Justice">
+Justice
+</option>
+
+<option value="Public Safety">
+Public Safety
+</option>
+
+<option value="Finance">
+Finance
+</option>
+
+<option value="Organizations">
+Organizations
+</option>
+
+<option value="Business">
+Business
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+<label>Icon</label>
+<input id="icon" placeholder="🏢">
+</div>
+
+<div class="field full">
+<label>Description</label>
+<textarea id="description"></textarea>
+</div>
+
+<div class="field">
+<label>Province</label>
+<input id="province">
+</div>
+
+<div class="field">
+<label>District</label>
+<input id="district">
+</div>
+
+<div class="field">
+<label>Sector</label>
+<input id="sector">
+</div>
+
+<div class="field">
+<label>Address</label>
+<input id="address">
+</div>
+
+<div class="field">
+<label>Latitude</label>
+<input id="latitude" type="number" step="any">
+</div>
+
+<div class="field">
+<label>Longitude</label>
+<input id="longitude" type="number" step="any">
+</div>
+
+<div class="field full">
+<label>
+Services
+</label>
+
+<input
+    id="services"
+    placeholder="Education, Research, Training"
+/>
+
+</div>
+
+<div class="field">
+<label>Phone</label>
+<input id="phone">
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="email" type="email">
+</div>
+
+<div class="field">
+<label>Official Website</label>
+<input id="website" type="url">
+</div>
+
+<div class="field">
+<label>Verification</label>
+
+<select id="verification">
+
+<option value="Verified">
+Verified
+</option>
+
+<option value="Unverified">
+Unverified
+</option>
+
+<option value="Pending Verification">
+Pending Verification
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="actions">
+
+<button type="submit">
+    Save Institution
+</button>
+
+<button
+    type="button"
+    class="secondary"
+    onclick="resetForm()"
+>
+    Clear
+</button>
+
+</div>
+
+<div id="message" class="message"></div>
+
+</form>
+
+</div>
+
+<div class="list-card">
+
+<h2>
+    Institutions
+</h2>
+
+<br>
+
+<input
+    class="search"
+    id="listSearch"
+    placeholder="Search institutions..."
+    oninput="renderList()"
+>
+
+<div id="institutionList"></div>
+
+</div>
+
+</div>
+
+<script>
+
+/*
+==================================================
+PRIVATE ADMIN CHECK
+==================================================
+*/
+
+if(
+    sessionStorage.getItem("rwandaGuideAdmin")
+    !== "true"
+){
+
+    window.location.href="admin-login.html";
+
+}
+
+
+/*
+==================================================
+DATABASE
+==================================================
+*/
+
+function getData(){
+
+    const saved=
+        localStorage.getItem("rwandaGuideInstitutions");
+
+    if(saved){
+
+        try{
+
+            const data=JSON.parse(saved);
+
+            if(Array.isArray(data)){
+                return data;
+            }
+
+        }catch(e){}
+
+    }
+
+    return [];
+
+}
+
+function saveData(data){
+
+    localStorage.setItem(
+        "rwandaGuideInstitutions",
+        JSON.stringify(data)
+    );
+
+}
+
+
+/*
+==================================================
+ESCAPE HTML
+==================================================
+*/
+
+function escapeHTML(value){
+
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/*
+==================================================
+SAVE
+==================================================
+*/
+
+function saveInstitution(event){
+
+    event.preventDefault();
+
+    const data=getData();
+
+    const editId=
+        document.getElementById("editId").value;
+
+    const services=
+        document.getElementById("services")
+        .value
+        .split(",")
+        .map(item=>item.trim())
+        .filter(item=>item);
+
+    const institution={
+
+        id:
+            editId ||
+            "institution-"+Date.now(),
+
+        name:
+            document.getElementById("name").value.trim(),
+
+        category:
+            document.getElementById("category").value,
+
+        icon:
+            document.getElementById("icon").value.trim()
+            || "🏢",
+
+        description:
+            document.getElementById("description").value.trim(),
+
+        province:
+            document.getElementById("province").value.trim(),
+
+        district:
+            document.getElementById("district").value.trim(),
+
+        sector:
+            document.getElementById("sector").value.trim(),
+
+        address:
+            document.getElementById("address").value.trim(),
+
+        latitude:
+            parseFloat(
+                document.getElementById("latitude").value
+            ),
+
+        longitude:
+            parseFloat(
+                document.getElementById("longitude").value
+            ),
+
+        services:services,
+
+        phone:
+            document.getElementById("phone").value.trim(),
+
+        email:
+            document.getElementById("email").value.trim(),
+
+        website:
+            document.getElementById("website").value.trim(),
+
+        verification:
+            document.getElementById("verification").value
+
+    };
+
+    if(editId){
+
+        const index=
+            data.findIndex(item=>item.id===editId);
+
+        if(index!==-1){
+
+            data[index]=institution;
+
+        }
+
+    }else{
+
+        data.push(institution);
+
+    }
+
+    saveData(data);
+
+    document.getElementById("message").textContent=
+        editId
+        ? "Institution updated successfully."
+        : "Institution added successfully.";
+
+    resetForm();
+
+    renderList();
+
+    updateStats();
+
+}
+
+
+/*
+==================================================
+EDIT
+==================================================
+*/
+
+function editInstitution(id){
+
+    const institution=
+        getData().find(item=>item.id===id);
+
+    if(!institution){
+        return;
+    }
+
+    document.getElementById("editId").value=
+        institution.id;
+
+    document.getElementById("name").value=
+        institution.name || "";
+
+    document.getElementById("category").value=
+        institution.category || "Education";
+
+    document.getElementById("icon").value=
+        institution.icon || "";
+
+    document.getElementById("description").value=
+        institution.description || "";
+
+    document.getElementById("province").value=
+        institution.province || "";
+
+    document.getElementById("district").value=
+        institution.district || "";
+
+    document.getElementById("sector").value=
+        institution.sector || "";
+
+    document.getElementById("address").value=
+        institution.address || "";
+
+    document.getElementById("latitude").value=
+        institution.latitude ?? "";
+
+    document.getElementById("longitude").value=
+        institution.longitude ?? "";
+
+    document.getElementById("services").value=
+        Array.isArray(institution.services)
+        ? institution.services.join(", ")
+        : institution.services || "";
+
+    document.getElementById("phone").value=
+        institution.phone || "";
+
+    document.getElementById("email").value=
+        institution.email || "";
+
+    document.getElementById("website").value=
+        institution.website || "";
+
+    document.getElementById("verification").value=
+        institution.verification || "Unverified";
+
+    document.getElementById("formTitle").textContent=
+        "Edit Institution";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/*
+==================================================
+DELETE
+==================================================
+*/
+
+function deleteInstitution(id){
+
+    const institution=
+        getData().find(item=>item.id===id);
+
+    if(!institution){
+        return;
+    }
+
+    const confirmDelete=
+        confirm(
+            `Delete "${institution.name}"?`
+        );
+
+    if(!confirmDelete){
+        return;
+    }
+
+    const data=
+        getData().filter(item=>item.id!==id);
+
+    saveData(data);
+
+    renderList();
+
+    updateStats();
+
+}
+
+
+/*
+==================================================
+RESET FORM
+==================================================
+*/
+
+function resetForm(){
+
+    document.getElementById("editId").value="";
+
+    document.querySelector("form").reset();
+
+    document.getElementById("formTitle").textContent=
+        "Add Institution";
+
+}
+
+
+/*
+==================================================
+LIST
+==================================================
+*/
+
+function renderList(){
+
+    const container=
+        document.getElementById("institutionList");
+
+    const search=
+        document.getElementById("listSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const data=
+        getData().filter(item=>{
+
+            return (
+                item.name+
+                " "+
+                item.category+
+                " "+
+                item.district
+            )
+            .toLowerCase()
+            .includes(search);
+
+        });
+
+    if(data.length===0){
+
+        container.innerHTML=
+            "<p>No institutions found.</p>";
+
+        return;
+
+    }
+
+    container.innerHTML=
+        data.map(item=>`
+
+        <div class="institution">
+
+            <h3>
+                ${escapeHTML(item.icon || "🏢")}
+                ${escapeHTML(item.name)}
+            </h3>
+
+            <div class="meta">
+
+                Category:
+                ${escapeHTML(item.category)}
+
+                <br>
+
+                Location:
+                ${escapeHTML(item.district)}
+                ${item.sector
+                    ? ", "+escapeHTML(item.sector)
+                    : ""
+                }
+
+                <br>
+
+                Verification:
+                ${escapeHTML(item.verification)}
+
+            </div>
+
+            <div class="list-actions">
+
+                <button
+                    onclick="editInstitution('${item.id}')"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="danger"
+                    onclick="deleteInstitution('${item.id}')"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+        `).join("");
+
+}
+
+
+/*
+==================================================
+STATS
+==================================================
+*/
+
+function updateStats(){
+
+    const data=getData();
+
+    const verified=
+        data.filter(item=>
+            item.verification==="Verified"
+        ).length;
+
+    const unverified=
+        data.filter(item=>
+            item.verification!=="Verified"
+        ).length;
+
+    document.getElementById("total").textContent=
+        data.length;
+
+    document.getElementById("verified").textContent=
+        verified;
+
+    document.getElementById("unverified").textContent=
+        unverified;
+
+}
+
+
+/*
+==================================================
+LOGOUT
+==================================================
+*/
+
+function logout(){
+
+    sessionStorage.removeItem(
+        "rwandaGuideAdmin"
+    );
+
+    window.location.href=
+        "admin-login.html";
+
+}
+
+
+/*
+==================================================
+START
+==================================================
+*/
+
+renderList();
+updateStats();
+
+</script>
+
+</body>
+
+</html>

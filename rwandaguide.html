@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RwandaGuide</title>
+
+<style>
+:root{
+    --bg:#f5f7fa;
+    --card:#ffffff;
+    --text:#17212b;
+    --muted:#667483;
+    --border:#d7dee7;
+    --header:#07111f;
+    --hero:#0d5fa8;
+    --primary:#1677d2;
+}
+
+body.dark{
+    --bg:#07111f;
+    --card:#101d2d;
+    --text:#f1f5f9;
+    --muted:#aab7c7;
+    --border:#293c50;
+    --header:#020914;
+    --hero:#0b4f88;
+    --primary:#3b9cff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:.2s;
+}
+
+header{
+    background:var(--header);
+    color:white;
+    padding:16px 6%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.brand{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.brand small{
+    display:block;
+    font-size:11px;
+    color:#79baff;
+    margin-top:3px;
+}
+
+.nav{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.nav a{
+    color:#dcecff;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.nav a:hover{color:#55aaff}
+
+.theme{
+    border:1px solid #53677d;
+    background:transparent;
+    color:white;
+    padding:8px 11px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.back{
+    display:inline-block;
+    margin:20px 6%;
+    padding:10px 15px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--text);
+    text-decoration:none;
+}
+
+.hero{
+    background:var(--hero);
+    color:white;
+    padding:60px 7%;
+}
+
+.hero h1{
+    font-size:clamp(35px,6vw,60px);
+    margin-bottom:15px;
+}
+
+.hero p{
+    max-width:700px;
+    color:#dceeff;
+    line-height:1.7;
+}
+
+.search-area{
+    max-width:1000px;
+    margin:-30px auto 30px;
+    padding:0 20px;
+}
+
+.search-box{
+    background:var(--card);
+    padding:15px;
+    border-radius:14px;
+    box-shadow:0 8px 30px rgba(0,0,0,.15);
+    display:flex;
+    gap:10px;
+}
+
+.search-box input{
+    flex:1;
+    padding:15px;
+    background:var(--bg);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:16px;
+    outline:none;
+}
+
+.search-box button{
+    border:0;
+    padding:0 20px;
+    border-radius:9px;
+    background:var(--primary);
+    color:white;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.section-title{
+    margin:30px 0 15px;
+}
+
+.categories{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.category{
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    padding:12px 17px;
+    border-radius:30px;
+    cursor:pointer;
+}
+
+.category:hover{
+    background:var(--bg);
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    padding:22px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.icon{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.card h3{margin-bottom:8px}
+
+.card p{
+    color:var(--muted);
+    line-height:1.5;
+    font-size:14px;
+}
+
+.badge{
+    display:inline-block;
+    margin:10px 0;
+    padding:5px 9px;
+    border-radius:15px;
+    background:#fff4d6;
+    color:#876300;
+    font-size:12px;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.actions a{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    border-radius:8px;
+    text-decoration:none;
+    background:var(--primary);
+    color:white;
+    font-size:13px;
+}
+
+.actions a.map{
+    background:#e9f3ff;
+    color:#1261a7;
+}
+
+body.dark .actions a.map{
+    background:#17334d;
+    color:#8ec8ff;
+}
+
+.empty{
+    text-align:center;
+    padding:50px;
+    color:var(--muted);
+}
+
+footer{
+    margin-top:60px;
+    padding:30px;
+    text-align:center;
+    background:var(--header);
+    color:#8495a8;
+}
+
+@media(max-width:700px){
+
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .nav{
+        width:100%;
+    }
+
+    .search-box{
+        flex-direction:column;
+    }
+
+    .search-box button{
+        padding:13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="brand">
+        RwandaGuide
+        <small>A Manthedan Product</small>
+    </div>
+
+    <div class="nav">
+
+        <a href="rwandaguide.html">Home</a>
+        <a href="#categories">Categories</a>
+        <a href="#institutions">Institutions</a>
+        <a href="map.html">🗺 Map</a>
+
+        <button class="theme"
+                onclick="toggleTheme()"
+                id="themeBtn">
+            🌙 Dark
+        </button>
+
+    </div>
+
+</header>
+
+<a class="back" href="index.html">
+    ← Back
+</a>
+
+<section class="hero">
+
+    <h1>Find your way across Rwanda.</h1>
+
+    <p>
+        Find institutions, services and useful locations
+        across Rwanda from one platform.
+    </p>
+
+</section>
+
+<div class="search-area">
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search institutions or services..."
+            oninput="renderInstitutions()"
+        >
+
+        <button onclick="getLocation()">
+            📍 My Location
+        </button>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+<h2 class="section-title" id="categories">
+    Categories
+</h2>
+
+<div class="categories">
+
+<button class="category" onclick="filterCategory('All')">All</button>
+<button class="category" onclick="filterCategory('Government')">🏛 Government</button>
+<button class="category" onclick="filterCategory('Health')">🏥 Health</button>
+<button class="category" onclick="filterCategory('Education')">🎓 Education</button>
+<button class="category" onclick="filterCategory('Justice')">⚖ Justice</button>
+<button class="category" onclick="filterCategory('Public Safety')">🚓 Public Safety</button>
+<button class="category" onclick="filterCategory('Finance')">💰 Finance</button>
+<button class="category" onclick="filterCategory('Organizations')">🏢 Organizations</button>
+<button class="category" onclick="filterCategory('Business')">🛍 Business</button>
+
+</div>
+
+<h2 class="section-title" id="institutions">
+    Institutions
+</h2>
+
+<div id="institutionCards" class="cards"></div>
+
+</div>
+
+<footer>
+    <strong>RwandaGuide</strong><br>
+    Find Institutions. Find Services. Find Your Way.<br><br>
+    © 2026 Manthedan
+</footer>
+
+<script>
+
+const demoInstitutions=[
+
+{
+id:"demo-government",
+name:"Rwanda Government",
+category:"Government",
+icon:"🏛",
+description:"Demo institution record for RwandaGuide.",
+province:"Kigali City",
+district:"Gasabo",
+sector:"Kacyiru",
+address:"Kacyiru, Kigali",
+latitude:-1.9441,
+longitude:30.0619,
+services:["Government services"],
+phone:"",
+email:"",
+website:"",
+verification:"Demo / Unverified"
+},
+
+{
+id:"demo-health",
+name:"Demo Health Institution",
+category:"Health",
+icon:"🏥",
+description:"Demo health institution record.",
+province:"Kigali City",
+district:"Gasabo",
+sector:"Kacyiru",
+address:"Kigali, Rwanda",
+latitude:-1.9441,
+longitude:30.0619,
+services:["Healthcare"],
+phone:"",
+email:"",
+website:"",
+verification:"Demo / Unverified"
+},
+
+{
+id:"demo-education",
+name:"Demo Education Institution",
+category:"Education",
+icon:"🎓",
+description:"Demo education institution record.",
+province:"Northern Province",
+district:"Musanze",
+sector:"Musanze",
+address:"Musanze, Rwanda",
+latitude:-1.5015,
+longitude:29.6108,
+services:["Education"],
+phone:"",
+email:"",
+website:"",
+verification:"Demo / Unverified"
+},
+
+{
+id:"demo-justice",
+name:"Demo Justice Institution",
+category:"Justice",
+icon:"⚖",
+description:"Demo justice institution record.",
+province:"Kigali City",
+district:"Nyarugenge",
+sector:"Nyarugenge",
+address:"Kigali, Rwanda",
+latitude:-1.944,
+longitude:30.061,
+services:["Justice services"],
+phone:"",
+email:"",
+website:"",
+verification:"Demo / Unverified"
+}
+
+];
+
+let currentCategory="All";
+
+function getData(){
+
+    const saved=localStorage.getItem(
+        "rwandaGuideInstitutions"
+    );
+
+    if(saved){
+
+        try{
+
+            const data=JSON.parse(saved);
+
+            if(Array.isArray(data)){
+                return data;
+            }
+
+        }catch(e){}
+
+    }
+
+    return demoInstitutions;
+}
+
+function escapeHTML(value){
+
+    return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+function renderInstitutions(){
+
+    const container=
+        document.getElementById("institutionCards");
+
+    const search=
+        document.getElementById("searchInput")
+        .value.toLowerCase().trim();
+
+    const filtered=getData().filter(item=>{
+
+        const categoryMatch=
+            currentCategory==="All" ||
+            item.category===currentCategory;
+
+        const services=
+            Array.isArray(item.services)
+            ? item.services.join(" ")
+            : String(item.services || "");
+
+        const searchable=(
+            item.name+" "+
+            item.category+" "+
+            item.description+" "+
+            services
+        ).toLowerCase();
+
+        return categoryMatch &&
+               searchable.includes(search);
+    });
+
+    if(filtered.length===0){
+
+        container.innerHTML=
+            `<div class="empty">No institutions found.</div>`;
+
+        return;
+    }
+
+    container.innerHTML=filtered.map(item=>{
+
+        const services=
+            Array.isArray(item.services)
+            ? item.services.join(", ")
+            : item.services || "";
+
+        return `
+
+        <div class="card">
+
+            <div class="icon">
+                ${escapeHTML(item.icon || "🏢")}
+            </div>
+
+            <h3>${escapeHTML(item.name)}</h3>
+
+            <small>${escapeHTML(item.category)}</small>
+
+            <div class="badge">
+                ${escapeHTML(item.verification || "Unverified")}
+            </div>
+
+            <p>${escapeHTML(item.description)}</p>
+
+            <p>
+                <strong>Services:</strong>
+                ${escapeHTML(services)}
+            </p>
+
+            <div class="actions">
+
+                <a href="institution.html?id=${encodeURIComponent(item.id)}">
+                    Details
+                </a>
+
+                <a class="map"
+                   href="map.html?id=${encodeURIComponent(item.id)}">
+                    Map
+                </a>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}
+
+function filterCategory(category){
+
+    currentCategory=category;
+    renderInstitutions();
+
+}
+
+function getLocation(){
+
+    if(!navigator.geolocation){
+
+        alert("Location is not supported by your browser.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        position=>{
+
+            window.location.href=
+                `map.html?lat=${position.coords.latitude}&lng=${position.coords.longitude}`;
+
+        },
+
+        ()=>{
+            alert("Unable to get your location.");
+        }
+
+    );
+
+}
+
+function applyTheme(){
+
+    const dark=
+        localStorage.getItem("rwandaGuideTheme")==="dark";
+
+    document.body.classList.toggle("dark",dark);
+
+    document.getElementById("themeBtn").textContent=
+        dark ? "☀️ White" : "🌙 Dark";
+}
+
+function toggleTheme(){
+
+    const dark=
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "rwandaGuideTheme",
+        dark ? "light" : "dark"
+    );
+
+    applyTheme();
+}
+
+applyTheme();
+renderInstitutions();
+
+</script>
+
+</body>
+</html>
